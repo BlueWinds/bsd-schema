@@ -1,0 +1,128 @@
+{
+  "title": "BSD Game System",
+  "description": "A game system file, data about a system for use with any number of roster building tools",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "profileTypes",
+    "revision",
+    "type"
+  ],
+  "properties": {
+    "authorContact": {
+      "type": "string",
+      "description": "How to get a hold of the game system's maintaners"
+    },
+    "authorName": {
+      "type": "string",
+      "description": "The name(s) of the authors/maintaners"
+    },
+    "authorUrl": {
+      "type": "string",
+      "description": "The authors/maintaners website or other URL"
+    },
+    "categoryEntries": {
+      "type": "array",
+      "description": "Categories for this game system, automatically imported to every catalogue using it",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/category"
+      }
+    },
+    "costTypes": {
+      "type": "array",
+      "description": "Types of cost this game system uses",
+      "items": {
+        "type": "object",
+        "required": ["defaultCostLimit", "id", "name"],
+        "properties": {
+          "comment": { "type": "string" },
+          "defaultCostLimit": { "type": "number" },
+          "hidden": { "type": "boolean", "default": false },
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "entryLinks": {
+      "type": "array",
+      "description": "entryLinks that are available and validated for every force using this game system",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/selectionEntryLink"
+      }
+    },
+    "forceEntries": {
+      "type": "array",
+      "$ref": "shared.schema.json#/definitions/forceEntries"
+    },
+    "id": { "type": "string" },
+    "name": { "type": "string" },
+    "profileTypes": {
+      "type": "array",
+      "description": "profile types this game system uses",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "comment": { "type": "string" },
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "characteristicTypes": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "shared.schema.json#/definitions/characteristicType" }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "publications": {
+      "type": "array",
+      "description": "publications that should be listed in every roster using this game system",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/publication"
+      }
+    },
+    "readme": {
+      "type": "string",
+      "description": "Additional information about this game system"
+    },
+    "revision": {
+      "type": "integer",
+      "description": "Incrementing revision number for this game system"
+    },
+    "sharedProfiles": {
+      "type": "array",
+      "description": "profiles available to any catalogue using this game system",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/profile"
+      }
+    },
+    "sharedRules": {
+      "type": "array",
+      "description": "rules available to any catalogue using this game system",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/rule"
+      }
+    },
+    "sharedSelectionEntries": {
+      "type": "array",
+      "description": "selectionEntries available to any catalogue using this game system",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/selectionEntry"
+      }
+    },
+    "sharedSelectionEntryGroups": {
+      "type": "array",
+      "description": "selectionEntryGroups available to any catalogue using this game system",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/selectionEntryGroup"
+      }
+    },
+    "type": {
+      "const": "gameSystem",
+      "description": "Identifies this object as a gameSystem (as opposed to a catalogue or roster)"
+    }
+  }
+}

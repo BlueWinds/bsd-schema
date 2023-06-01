@@ -1,0 +1,491 @@
+{
+  "title": "BSD shared definitions",
+  "description": "Schema definitions shared between gameSystems, catalogues and rosters",
+  "definitions": {
+    "category": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "comment": { "type": "string" },
+        "constraints": { "$ref": "#/definitions/constraints" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "infoLinks": { "$ref": "#/definitions/infoLinks" },
+        "infoGroups": { "$ref": "#/definitions/infoGroups" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "profiles": { "$ref": "#/definitions/profiles" },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "rules": { "$ref": "#/definitions/rules" }
+      },
+      "additionalProperties": false
+    },
+    "categoryLink": {
+      "type": "object",
+      "required": ["id", "targetId"],
+      "properties": {
+        "comment": { "type": "string" },
+        "constraints": { "$ref": "#/definitions/constraints" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "primary": { "type": "boolean", "default": false },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "rules": { "$ref": "#/definitions/rules" },
+        "targetId": { "type": "string", "description": "References a category" },
+        "type": { "const": "selectionEntry" }
+      },
+      "additionalProperties": false
+    },
+    "categoryLinks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/categoryLink" }
+    },
+    "characteristicType": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "comment": { "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "condition": {
+      "type": "object",
+      "required": [],
+      "properties": {
+        "childId": {
+          "type": "string",
+          "description": "entry, entryGroup or category id to be counted in this condition"
+        },
+        "comment": { "type": "string" },
+        "field": {
+          "type": "string",
+          "anyOf": [
+            { "enum": ["selections", "forces"], "description": "Count matching selections/forces" },
+            { "description": "Or a cost id to sum the 'value's for across matching selections" }
+          ]
+        },
+        "includeChildForces": { "type": "boolean", "default": false },
+        "includeChildSelections": { "type": "boolean", "default": false },
+        "percentValue": { "type": "boolean", "default": false },
+        "scope": {
+          "type": "string",
+          "anyOf": [
+            { "enum": ["self", "parent", "force", "roster", "ancestor", "primary-catalogue"] },
+            { "description": "Or a selectionEntry, selectionEntryGroup or selectionEntryLink id" }
+          ]
+        },
+        "shared": { "type": "boolean", "default": true, "description": "This field is mysterious and complicated." },
+        "type": { "type": "string" },
+        "value": { "type": ["string", "number"] }
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "enum": ["greaterThan", "lessThan", "atMost", "atLeast", "equalTo", "notEqualTo"]},
+            "value": { "type": "number" }
+          }
+        },
+        {
+          "required": ["childId"],
+          "properties": {
+            "type": { "enum": ["instanceOf", "notInstanceOf"]},
+            "percentValue": { "const": false, "description": "When a condition references an entry id, percentValue must be false or undefined" }
+          }
+        }
+      ]
+    },
+    "conditionGroup": {
+      "type": "object",
+      "properties": {
+        "comment": { "type": "string" },
+        "conditions": { "$ref": "#/definitions/conditions" },
+        "conditionGroups": { "$ref": "#/definitions/conditionGroups" },
+        "type": { "enum": ["and", "or"] }
+      },
+      "additionalProperties": false
+    },
+    "conditionGroups": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/conditionGroup" }
+    },
+    "conditions": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/condition" }
+    },
+    "constraint": {
+      "type": "object",
+      "required": ["field", "id", "scope"],
+      "properties": {
+        "comment": { "type": "string" },
+        "field": {
+          "anyOf": [
+            { "enum": ["selections", "forces"] },
+            { "type": "string", "description": "References a costType id"}
+          ]
+        },
+        "id": { "type": "string" },
+        "includeChildForces": { "type": "boolean", "default": false },
+        "includeChildSelections": { "type": "boolean", "default": false },
+        "percentValue": { "type": "boolean", "default": false },
+        "scope": {
+          "type": "string",
+          "anyOf": [
+            { "enum": ["self", "parent", "force", "roster", "ancestor", "primary-catalogue"] },
+            { "description": "Or a selectionEntry, selectionEntryGroup or selectionEntryLink id" }
+          ]
+        },
+        "shared": { "type": "boolean", "default": true, "description": "This field is mysterious and complicated." },
+        "type": { "enum": ["min", "max"] },
+        "value": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/constraint" }
+    },
+    "costs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "typeId", "value"],
+        "properties": {
+          "name": { "type": "string" },
+          "typeId": { "type": "string", "description": "References a costType" },
+          "value": { "type": "number" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "forceEntry": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "categoryLinks": { "$ref": "#/definitions/categoryLinks" },
+        "comment": { "type": "string" },
+        "constraints": { "$ref": "#/definitions/constraints" },
+        "forceEntries": { "$ref": "#/definitions/forceEntries" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "rules": { "$ref": "#/definitions/rules" }
+      },
+      "additionalProperties": false
+    },
+    "forceEntries": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/forceEntry" }
+    },
+    "infoLink": {
+      "type": "object",
+      "required": ["id", "targetId"],
+      "properties": {
+        "categoryLinks": { "$ref": "#/definitions/categoryLinks" },
+        "collective": { "type": "boolean", "default": false },
+        "comment": { "type": "string" },
+        "constraints": { "$ref": "#/definitions/constraints" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "targetId": { "type": "string", "description": "References a rule, profile or infoGroup" },
+        "type": { "enum": ["rule", "profile", "infoGroup"] }
+      },
+      "additionalProperties": false
+    },
+    "infoLinks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/infoLink" }
+    },
+    "infoGroup": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "infoGroups": { "$ref": "#/definitions/infoGroups" },
+        "infoLinks": { "$ref": "#/definitions/infoLinks" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "profiles": { "$ref": "#/definitions/profiles" },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "rules": { "$ref": "#/definitions/rules" }
+      },
+      "additionalProperties": false
+    },
+    "infoGroups": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/infoGroup" }
+    },
+    "modifier": {
+      "type": "object",
+      "required": ["field", "type", "value"],
+      "properties": {
+        "comment": { "type": "string" },
+        "conditions": { "$ref": "#/definitions/conditions" },
+        "conditionGroups": { "$ref": "#/definitions/conditionGroups" },
+        "field": { "type": "string" },
+        "repeats": { "$ref": "#/definitions/repeats" },
+        "type": { "type": "string" },
+        "value": { "type": ["number", "boolean", "string"]}
+      },
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "properties": {
+            "type": { "enum": ["set", "decrement", "increment"] },
+            "field": { "description": "A field on the current entry such as 'hidden' or a cost id to modify" },
+            "value": { "type": ["number", "boolean", "string"] }
+          }
+        },
+        {
+          "properties": {
+            "type": { "enum": ["append"] },
+            "field": { "description": "A field on the current entry such as 'name' to append the 'value' to" },
+            "value": { "type": "string" }
+          }
+        },
+        {
+          "properties": {
+            "type": { "enum": ["add", "remove", "set-primary", "unset-primary"] },
+            "field": { "const": "category" },
+            "value": { "type": "string", "description": "The category to add/remove/modify" }
+          }
+        }
+      ]
+    },
+    "modifiers": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/modifier" }
+    },
+    "modifierGroup": {
+      "type": "object",
+      "properties": {
+        "comment": { "type": "string" },
+        "conditions": { "$ref": "#/definitions/conditions" },
+        "conditionGroups": { "$ref": "#/definitions/conditionGroups" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "repeats": { "$ref": "#/definitions/repeats" }
+      },
+      "additionalProperties": false
+    },
+    "modifierGroups": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/modifierGroup" }
+    },
+    "publication": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "comment": { "type": "string" },
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "publicationDate": { "type": "string" },
+        "publisher": { "type": "string" },
+        "publisherUrl": { "type": "string" },
+        "shortName": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "required": ["characteristics", "id", "typeId"],
+      "properties": {
+        "characteristics": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "typeId"],
+            "properties": {
+              "#text": { "type": "string", "default": "" },
+              "name": { "type": "string" },
+              "typeId": { "type": "string", "description": "References a characteristicType" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "comment": { "type": "string" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "typeId": { "type": "string", "description": "References a profileType" },
+        "typeName": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/profile" }
+    },
+    "repeat": {
+      "type": "object",
+      "required": ["field", "scope", "value"],
+      "properties": {
+        "childId": {
+          "type": "string",
+          "description": "entry, entryGroup or category id to be counted in this condition"
+        },
+        "comment": { "type": "string" },
+        "field": {
+          "anyOf": [
+            { "enum": ["selections", "forces"] },
+            { "type": "string", "description": "References a costType id"}
+          ]
+        },
+        "includeChildForces": { "type": "boolean", "default": false },
+        "includeChildSelections": { "type": "boolean", "default": false },
+        "percentValue": { "type": "boolean", "default": false },
+        "repeats": { "type": "number", "default": 1 },
+        "roundUp": { "type": "boolean", "default": false },
+        "scope": {
+          "type": "string",
+          "anyOf": [
+            { "enum": ["self", "parent", "force", "roster", "ancestor", "primary-catalogue"] },
+            { "description": "Or a selectionEntry, selectionEntryGroup or selectionEntryLink id" }
+          ]
+        },
+        "shared": { "type": "boolean", "default": true, "description": "This field is mysterious and complicated." },
+        "value": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "repeats": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/repeat" }
+    },
+    "rule": {
+      "type": "object",
+        "required": ["id", "name"],
+      "properties": {
+        "comment": { "type": "string" },
+        "description": { "type": "string" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "publicationId": { "type": "string", "description": "References a publication" }
+      },
+      "additionalProperties": false
+    },
+    "rules": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/rule" }
+    },
+    "selectionEntry": {
+      "type": "object",
+      "required": ["id", "name", "type"],
+      "properties": {
+        "categoryLinks": { "$ref": "#/definitions/categoryLinks" },
+        "collective": { "type": "boolean", "default": false },
+        "comment": { "type": "string" },
+        "costs": { "$ref": "#/definitions/costs" },
+        "constraints": { "$ref": "#/definitions/constraints" },
+        "entryLinks": { "$ref": "#/definitions/selectionEntryLinks" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "infoLinks": { "$ref": "#/definitions/infoLinks" },
+        "infoGroups": { "$ref": "#/definitions/infoGroups" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "profiles": { "$ref": "#/definitions/profiles" },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "rules": { "$ref": "#/definitions/rules" },
+        "selectionEntries": { "$ref": "#/definitions/selectionEntries" },
+        "selectionEntryGroups": { "$ref": "#/definitions/selectionEntryGroups" },
+        "type": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "selectionEntries": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/selectionEntry" }
+    },
+    "selectionEntryGroup": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "categoryLinks": { "$ref": "#/definitions/categoryLinks" },
+        "collective": { "type": "boolean", "default": false },
+        "comment": { "type": "string" },
+        "constraints": { "$ref": "#/definitions/constraints" },
+        "defaultSelectionEntryId": { "type": "string" },
+        "entryLinks": { "$ref": "#/definitions/selectionEntryLinks" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "infoLinks": { "$ref": "#/definitions/infoLinks" },
+        "infoGroups": { "$ref": "#/definitions/infoGroups" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "profiles": { "$ref": "#/definitions/profiles" },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "rules": { "$ref": "#/definitions/rules" },
+        "selectionEntries": { "$ref": "#/definitions/selectionEntries" },
+        "selectionEntryGroups": { "$ref": "#/definitions/selectionEntryGroups" }
+      },
+      "additionalProperties": false
+    },
+    "selectionEntryGroups": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/selectionEntryGroup" }
+    },
+    "selectionEntryLink": {
+      "type": "object",
+      "required": ["id", "targetId"],
+      "properties": {
+        "categoryLinks": { "$ref": "#/definitions/categoryLinks" },
+        "collective": { "type": "boolean", "default": false },
+        "comment": { "type": "string" },
+        "constraints": { "$ref": "#/definitions/constraints" },
+        "costs": { "$ref": "#/definitions/costs" },
+        "entryLinks": { "$ref": "#/definitions/selectionEntryLinks" },
+        "hidden": { "type": "boolean", "default": false },
+        "id": { "type": "string" },
+        "infoLinks": { "$ref": "#/definitions/infoLinks" },
+        "infoGroups": { "$ref": "#/definitions/infoGroups" },
+        "modifiers": { "$ref": "#/definitions/modifiers" },
+        "modifierGroups": { "$ref": "#/definitions/modifierGroups" },
+        "name": { "type": "string" },
+        "page": { "type": ["number", "string"] },
+        "profiles": { "$ref": "#/definitions/profiles" },
+        "publicationId": { "type": "string", "description": "References a publication" },
+        "rules": { "$ref": "#/definitions/rules" },
+        "selectionEntries": { "$ref": "#/definitions/selectionEntries" },
+        "selectionEntryGroups": { "$ref": "#/definitions/selectionEntryGroups" },
+        "targetId": { "type": "string", "description": "References a selectionEntry, selectionEntryGroup or another selectionEntryLink" },
+        "type": { "enum": ["selectionEntry", "selectionEntryGroup"] }
+      },
+      "additionalProperties": false
+    },
+    "selectionEntryLinks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/selectionEntryLink" }
+    }
+  }
+}
