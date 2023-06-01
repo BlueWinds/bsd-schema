@@ -13,18 +13,14 @@ ajv.addSchema(catalogueSchema, 'catalogue.schema.json')
 export const validateCatalogue = (catalogue) => {
   const validate = ajv.getSchema('catalogue.schema.json')
   if (!validate(catalogue)) {
-    console.log(validate.errors.length, 'errors')
-    console.log(validate.errors[0])
-    console.log(catalogue)
+    return validate.errors
   }
 }
 
 export const validateGameSystem = (gameSystem) => {
   const validate = ajv.getSchema('gameSystem.schema.json')
   if (!validate(gameSystem)) {
-    console.log(validate.errors.length, 'errors')
-    console.log(validate.errors[0])
-    console.log(gameSystem)
+    return validate.errors
   }
 }
 
@@ -105,7 +101,7 @@ function normalize(x) {
   }
 }
 
-export const parseXML = (xmlString) => {
+export const parseXML = (xmlString, validate = true) => {
   let data = parser.parse(xmlString)
 
   if (data.catalogue) {
@@ -116,7 +112,10 @@ export const parseXML = (xmlString) => {
     delete catalogue.xmlns
 
     normalize(catalogue)
-    validateCatalogue(catalogue)
+    if (validate) {
+      const errors = validateCatalogue(catalogue)
+      if (errors) { throw errors }
+    }
     return catalogue
   } else if (data.gameSystem) {
     const gameSystem = {
@@ -126,7 +125,10 @@ export const parseXML = (xmlString) => {
     delete gameSystem.xmlns
 
     normalize(gameSystem)
-    validateGameSystem(gameSystem)
+    if (validate) {
+      const errors = validateGameSystem(gameSystem)
+      if (errors) { throw errors }
+    }
     return gameSystem
   } else {
     throw new Error('xml did not contain a <catalogue> or <gameSystem> element at the top level.')

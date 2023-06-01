@@ -9,7 +9,7 @@
     "url": "git+https://github.com/BlueWinds/bsd-schema.git"
   },
   "author": "BlueWinds",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/BlueWinds/bsd-schema/issues"
   },
