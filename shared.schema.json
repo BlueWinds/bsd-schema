@@ -37,8 +37,7 @@
         "primary": { "type": "boolean", "default": false },
         "publicationId": { "type": "string", "description": "References a publication" },
         "rules": { "$ref": "#/definitions/rules" },
-        "targetId": { "type": "string", "description": "References a category" },
-        "type": { "const": "selectionEntry" }
+        "targetId": { "type": "string", "description": "References a category" }
       },
       "additionalProperties": false
     },
@@ -166,6 +165,22 @@
         "additionalProperties": false
       }
     },
+    "costTypes": {
+      "type": "array",
+      "description": "Types of cost this game system uses",
+      "items": {
+        "type": "object",
+        "required": ["defaultCostLimit", "id", "name"],
+        "properties": {
+          "comment": { "type": "string" },
+          "defaultCostLimit": { "type": "number" },
+          "hidden": { "type": "boolean", "default": false },
+          "id": { "type": "string" },
+          "name": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
     "forceEntry": {
       "type": "object",
       "required": ["id", "name"],
@@ -243,29 +258,27 @@
         "field": { "type": "string" },
         "repeats": { "$ref": "#/definitions/repeats" },
         "type": { "type": "string" },
-        "value": { "type": ["number", "boolean", "string"]}
+        "value": { "type": ["string", "number", "boolean"] }
       },
       "additionalProperties": false,
       "oneOf": [
         {
           "properties": {
             "type": { "enum": ["set", "decrement", "increment"] },
-            "field": { "description": "A field on the current entry such as 'hidden' or a cost id to modify" },
-            "value": { "type": ["number", "boolean", "string"] }
+            "field": { "description": "A field on the current entry such as 'hidden' or a cost id to modify" }
           }
         },
         {
           "properties": {
             "type": { "enum": ["append"] },
-            "field": { "description": "A field on the current entry such as 'name' to append the 'value' to" },
-            "value": { "type": "string" }
+            "field": { "description": "A field on the current entry such as 'name' to append the 'value' to" }
           }
         },
         {
           "properties": {
             "type": { "enum": ["add", "remove", "set-primary", "unset-primary"] },
             "field": { "const": "category" },
-            "value": { "type": "string", "description": "The category to add/remove/modify" }
+            "value": { "description": "The category to add/remove/modify" }
           }
         }
       ]
@@ -289,6 +302,25 @@
     "modifierGroups": {
       "type": "array",
       "items": { "$ref": "#/definitions/modifierGroup" }
+    },
+    "profileTypes": {
+      "type": "array",
+      "description": "profile types this game system uses",
+      "items": {
+        "type": "object",
+        "required": ["id", "name"],
+        "properties": {
+          "comment": { "type": "string" },
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "characteristicTypes": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "$ref": "shared.schema.json#/definitions/characteristicType" }
+          }
+        },
+        "additionalProperties": false
+      }
     },
     "publication": {
       "type": "object",

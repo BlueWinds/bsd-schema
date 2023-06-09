@@ -12,7 +12,7 @@
   "properties": {
     "authorContact": {
       "type": "string",
-      "description": "How to get a hold of the game system's maintaners"
+      "description": "How to get a hold of the catalogues's maintaners"
     },
     "authorName": {
       "type": "string",
@@ -21,6 +21,10 @@
     "authorUrl": {
       "type": "string",
       "description": "The authors/maintaners website or other URL"
+    },
+    "battleScribeVersion": {
+      "type": "string",
+      "description": "If this datafile is battlescribe-compatible, which version is required"
     },
     "catalogueLinks": {
       "type": "array",
@@ -37,52 +41,95 @@
         "additionalProperties": false
       }
     },
+    "categoryEntries": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/category"
+      }
+    },
+    "comment": { "type": "string" },
+    "costTypes": {
+      "type": "array",
+      "$ref": "shared.schema.json#/definitions/costTypes"
+    },
     "entryLinks": {
       "type": "array",
-      "description": "entryLinks that are available and validated for every force using this game system",
       "items": {
         "$ref": "shared.schema.json#/definitions/selectionEntryLink"
       }
     },
+    "forceEntries": {
+      "type": "array",
+      "$ref": "shared.schema.json#/definitions/forceEntries"
+    },
     "gameSystemId": { "type": "string", "description": "References a gameSystem" },
+    "gameSystemRevision": { "type": "integer", "description": "Revision of the gameSystem this catalogue relies on" },
     "id": { "type": "string" },
+    "infoLinks": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/infoLink"
+      }
+    },
     "library": { "type": "boolean", "default": false },
     "name": { "type": "string" },
+    "profileTypes": {
+      "type": "array",
+      "$ref": "shared.schema.json#/definitions/profileTypes"
+    },
     "publications": {
       "type": "array",
-      "description": "publications that should be listed in every roster using this game system",
+      "description": "publications that should be listed in every roster using this catalogue",
       "items": {
         "$ref": "shared.schema.json#/definitions/publication"
       }
     },
+    "readme": {
+      "type": "string",
+      "description": "Additional information about this game system"
+    },
     "revision": {
       "type": "integer",
-      "description": "Incrementing revision number for this game system"
+      "description": "Incrementing revision number for this catalogue"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/rule"
+      }
+    },
+    "selectionEntries": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/selectionEntry"
+      }
+    },
+    "sharedInfoGroups": {
+      "type": "array",
+      "items": {
+        "$ref": "shared.schema.json#/definitions/infoGroup"
+      }
     },
     "sharedProfiles": {
       "type": "array",
-      "description": "profiles available to any catalogue using this game system",
       "items": {
         "$ref": "shared.schema.json#/definitions/profile"
       }
     },
     "sharedRules": {
       "type": "array",
-      "description": "rules available to any catalogue using this game system",
       "items": {
         "$ref": "shared.schema.json#/definitions/rule"
       }
     },
     "sharedSelectionEntries": {
       "type": "array",
-      "description": "selectionEntries available to any catalogue using this game system",
       "items": {
         "$ref": "shared.schema.json#/definitions/selectionEntry"
       }
     },
     "sharedSelectionEntryGroups": {
       "type": "array",
-      "description": "selectionEntryGroups available to any catalogue using this game system",
       "items": {
         "$ref": "shared.schema.json#/definitions/selectionEntryGroup"
       }
@@ -91,5 +138,6 @@
       "const": "catalogue",
       "description": "Identifies this object as a gameSystem (as opposed to a catalogue or roster)"
     }
-  }
+  },
+  "additionalProperties": false
 }

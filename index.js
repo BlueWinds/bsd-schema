@@ -4,6 +4,7 @@ import Ajv2019 from "ajv/dist/2019"
 import catalogueSchema from './catalogue.schema.json'
 import gameSystemSchema from './gameSystem.schema.json'
 import sharedSchema from './shared.schema.json'
+import containerTags from './containerTags.json'
 
 const ajv = new Ajv2019({allErrors: true, allowUnionTypes: true, coerceTypes: true})
 ajv.addSchema(sharedSchema, 'shared.schema.json')
@@ -22,37 +23,6 @@ export const validateGameSystem = (gameSystem) => {
   if (!validate(gameSystem)) {
     return validate.errors
   }
-}
-
-const containerTags = {
-  catalogueLinks: "catalogueLink",
-  categoryEntries: "categoryEntry",
-  categoryLinks: "categoryLink",
-  characteristics: "characteristic",
-  characteristicTypes: "characteristicType",
-  conditions: "condition",
-  conditionGroups: "conditionGroup",
-  constraints: "constraint",
-  costs: "cost",
-  costTypes: "costType",
-  entryLinks: "entryLink",
-  forceEntries: "forceEntry",
-  infoGroups: "infoGroup",
-  infoLinks: "infoLink",
-  modifiers: "modifier",
-  modifierGroups: "modifierGroup",
-  profiles: "profile",
-  profileTypes: "profileType",
-  publications: "publication",
-  repeats: "repeat",
-  rules: "rule",
-  selectionEntries: "selectionEntry",
-  selectionEntryGroups: "selectionEntryGroup",
-  sharedInfoGroups: "infoGroup",
-  sharedProfiles: "profile",
-  sharedRules: "rule",
-  sharedSelectionEntries: "selectionEntry",
-  sharedSelectionEntryGroups: "selectionEntryGroup",
 }
 
 const escapedHtml = /&(?:amp|lt|gt|quot|#39|apos);/g
@@ -114,7 +84,10 @@ export const parseXML = (xmlString, validate = true) => {
     normalize(catalogue)
     if (validate) {
       const errors = validateCatalogue(catalogue)
-      if (errors) { throw errors }
+      if (errors) {
+        errors.catalogue = catalogue
+        throw errors
+      }
     }
     return catalogue
   } else if (data.gameSystem) {
@@ -127,9 +100,14 @@ export const parseXML = (xmlString, validate = true) => {
     normalize(gameSystem)
     if (validate) {
       const errors = validateGameSystem(gameSystem)
-      if (errors) { throw errors }
+      if (errors) {
+        errors.gameSystem = gameSystem
+        throw errors
+      }
     }
     return gameSystem
+  } else if (data.roster) {
+    return data.roster
   } else {
     throw new Error('xml did not contain a <catalogue> or <gameSystem> element at the top level.')
   }

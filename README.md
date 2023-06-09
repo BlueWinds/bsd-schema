@@ -18,6 +18,42 @@ console.log(catalogue.type) // catalogue
 console.log(catalogue.categoryEntries[107].name) // Kroot Farstalkers
 ```
 
+## Available JSON
+
+bsd-schemas makes available a number of useful json files for working with battlescribe-compatible data files.
+
+### gameSystem.schema.json / catalogue.schema.json
+
+These two files describe the format of of battlescribe-compatible XML files, as parsed into JSON. See `parseXML` / `parseJSON` or the example usage above.
+
+### shared.schema.json
+
+Contains definitions needed to make sense of other schema files in the repository. Used alongside `gameSystem.schema.json` and `catalogue.schema.json`.
+
+### containerTags.json
+
+`containerTags.json` is a file mapping xml containers with the tags they contain in Battlescribe-compatible documents. Eg:
+
+```
+{
+  categories: 'category',
+  sharedSelectionEntries: 'selectionEntry',
+  ...etc...
+}
+```
+
+describes the fact that in BSD, the format is
+```
+<categories>
+  <category ...>
+  <category ...>
+  <category ...>
+</categories>
+```
+
+This is used internally by the reference implementation, and exported in case other projects find the list useful in some way.
+
+
 ## API
 
 The reference implementation exports the following functions:
@@ -37,3 +73,6 @@ The reference implementation exports the following functions:
 ### validateGameSystem(catalogue: object)
 
 `validateGameSystem` accepts a javascript object, and returns either `undefined`, indicating the gameSystem matches the schema, or an array of errors.
+
+In addition, it exports the following constants:
+
