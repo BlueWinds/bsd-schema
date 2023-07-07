@@ -45,6 +45,7 @@ const parser = new fxparser.XMLParser({
   parseAttributeValue: true,
   parseTagValue: false,
   processEntities: false,
+  trimValues: false,
   attributeValueProcessor: (name, val) => unescape(val),
   tagValueProcessor: (name, val) => unescape(val),
   isArray: (name, jpath) => {
